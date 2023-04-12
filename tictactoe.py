@@ -138,25 +138,31 @@ def utility(board):
         if  (winner(board=board)==None):
             return 0
 
-def max_Value(board):
+def max_Value(board,alpha,beta):
     if terminal(board=board):
         return utility(board=board)
     v =-math.inf
     possible_actions = actions(board)
     if (len(possible_actions) > 0):
         for act in possible_actions:
-            v = max(v,min_Value(result(board,act)))
+            v = max(v,min_Value(result(board,act),alpha,beta))
+            alpha = max(alpha,v)
+            if beta<=alpha:
+                break
         return v
 
 
-def min_Value(board):
+def min_Value(board,alpha,beta):
     if terminal(board=board):
         return utility(board=board)
     v =math.inf
     possible_actions = actions(board)
     if (len(possible_actions) > 0):
         for act in possible_actions:
-            v = min(v,max_Value(result(board,act)))
+            v = min(v,max_Value(result(board,act),alpha,beta))
+            beta = min(beta,v)
+            if beta<=alpha:
+                break
         return v
 
 def minimax(board):
@@ -168,11 +174,13 @@ def minimax(board):
     next_player=player(board)
     all_actions = actions(board)
     possible_actions = []
+    alpha =-math.inf
+    beta =math.inf
     if (next_player == X):
 
         for action in all_actions:
             next_state = result(board,action)
-            min_value = max_Value(next_state)
+            min_value = max_Value(next_state,alpha,beta)
             possible_actions.append((min_value,action))
         res = -math.inf
         maxFound = False
@@ -188,7 +196,7 @@ def minimax(board):
 
         for action in all_actions:
             next_state = result(board,action)
-            max_value = max_Value(next_state)
+            max_value = max_Value(next_state,alpha,beta)
             possible_actions.append((max_value,action))
         res = math.inf
         minFound = False
